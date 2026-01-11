@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>CYBER ENGINE – WA REPORT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+  margin:0;background:#000;color:#fff;overflow-x:hidden
+}
+
+/* VIDEO BACKGROUND */
+.video-bg{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:-1;object-fit:cover;filter:blur(2px) brightness(.4)
+}
+
+/* CARD */
+.card{
+  background:rgba(20,0,40,.75);
+  border:1px solid rgba(180,0,255,.3);
+  border-radius:16px;
+  padding:16px;margin:14px auto;
+  max-width:420px;
+  box-shadow:0 0 30px rgba(180,0,255,.25)
+}
+h2{margin:0 0 10px;color:#c77dff;text-align:center}
+
+/* INPUT */
+input,button{
+  width:100%;padding:12px;margin-top:8px;
+  border-radius:12px;border:none;font-size:15px
+}
+input{background:#140020;color:#fff;border:1px solid #7020ff}
+button{
+  background:linear-gradient(135deg,#7020ff,#b517ff);
+  color:#fff;font-weight:bold;cursor:pointer
+}
+button:hover{opacity:.9}
+
+/* DASHBOARD */
+.stat{
+  display:flex;justify-content:space-between;
+  background:#12001f;padding:10px;
+  border-radius:12px;margin-top:8px
+}
+.badge{
+  padding:4px 10px;border-radius:10px;font-size:12px
+}
+.owner{background:#ff004c}
+.premium{background:#00c853}
+.free{background:#555}
+
+/* ACTIONS */
+.actions button{margin-top:10px}
+.log{
+  font-size:13px;background:#0d0018;
+  padding:10px;border-radius:10px;
+  margin-top:10px;height:120px;overflow:auto
+}
+
+.hide{display:none}
+</style>
+</head>
+
+<body>
+
+<video class="video-bg" autoplay loop muted>
+  <source src="video.mp4" type="video/mp4">
+</video>
+
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>LOGIN</h2>
+  <input id="luser" placeholder="Username">
+  <input id="lpass" type="password" placeholder="Password">
+  <button onclick="login()">Masuk</button>
+  <p style="text-align:center;font-size:13px">
+    Belum punya akun? <a href="#" onclick="showReg()" style="color:#c77dff">Daftar</a>
+  </p>
+</div>
+
+<!-- REGISTER -->
+<div class="card hide" id="regBox">
+  <h2>REGISTER</h2>
+  <input id="ruser" placeholder="Username">
+  <input id="rpass" type="password" placeholder="Password">
+  <button onclick="register()">Daftar</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="card hide" id="dash">
+  <h2>CYBER ENGINE</h2>
+
+  <div class="stat">
+    <span id="uName"></span>
+    <span id="uRole" class="badge"></span>
+  </div>
+
+  <div class="stat">
+    <span>Premium Exp</span>
+    <span id="uExp">-</span>
+  </div>
+
+  <div class="actions">
+    <button onclick="actionLog('BUG REPORT')">🐞 BUG</button>
+    <button onclick="actionLog('BAN REQUEST')">⛔ BAN</button>
+    <button onclick="actionLog('UNBAN REQUEST')">✅ UNBAN</button>
+  </div>
+
+  <div class="log" id="logBox"></div>
+
+  <!-- ADMIN -->
+  <div id="adminBox" class="hide">
+    <hr>
+    <h3 style="color:#ff7a7a">ADMIN PANEL</h3>
+    <input id="pUser" placeholder="Username target">
+    <input id="pDay" placeholder="Hari Premium (angka)">
+    <button onclick="setPremium()">Buat Premium</button>
+  </div>
+
+  <button onclick="logout()" style="margin-top:12px;background:#333">Logout</button>
+</div>
+
+<script>
+let users = JSON.parse(localStorage.getItem('users')) || {
+  owner:{pass:'owner123',role:'OWNER',exp:'2053-05-28'}
+}
+
+function save(){localStorage.setItem('users',JSON.stringify(users))}
+
+function showReg(){
+  loginBox.classList.add('hide')
+  regBox.classList.remove('hide')
+}
+
+function register(){
+  let u=ruser.value,p=rpass.value
+  if(!u||!p)return alert('Lengkapi data')
+  if(users[u])return alert('Username sudah ada')
+  users[u]={pass:p,role:'FREE',exp:null}
+  save();alert('Akun dibuat');location.reload()
+}
+
+function login(){
+  let u=luser.value,p=lpass.value
+  if(!users[u]||users[u].pass!==p)return alert('Login gagal')
+  localStorage.setItem('login',u)
+  loadDash()
+}
+
+function loadDash(){
+  let u=localStorage.getItem('login')
+  if(!u)return
+  let d=users[u]
+  loginBox.classList.add('hide')
+  regBox.classList.add('hide')
+  dash.classList.remove('hide')
+  uName.innerText=u
+  uRole.innerText=d.role
+  uRole.className='badge '+(d.role=='OWNER'?'owner':d.exp?'premium':'free')
+  uExp.innerText=d.exp||'-'
+  if(d.role=='OWNER')adminBox.classList.remove('hide')
+}
+
+function logout(){
+  localStorage.removeItem('login')
+  location.reload()
+}
+
+function actionLog(txt){
+  let log=document.createElement('div')
+  log.innerText=new Date().toLocaleTimeString()+' • '+txt
+  logBox.prepend(log)
+}
+
+function setPremium(){
+  let u=pUser.value,day=parseInt(pDay.value)
+  if(!users[u])return alert('User tidak ada')
+  let exp=new Date()
+  exp.setDate(exp.getDate()+day)
+  users[u].exp=exp.toISOString().split('T')[0]
+  users[u].role='PREMIUM'
+  save();alert('Premium aktif')
+}
+
+loadDash()
+</script>
+</body>
+  </html>
