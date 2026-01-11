@@ -2,179 +2,181 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>CYBER ENGINE Dashboard</title>
+<title>WA Report Tool</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;font-family:Segoe UI,Arial}
-body{
-  margin:0;
-  background:#000;
-  color:#fff;
-}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body,html{margin:0;height:100%;color:#fff}
 
-/* ===== TOP HEADER (ungu tebal seperti foto) ===== */
-.top{
-  background:linear-gradient(180deg,#6b1db8,#5a189a);
-  padding:18px 16px 22px;
-  border-radius:0 0 26px 26px;
-  box-shadow:0 10px 40px rgba(120,0,255,.6);
-}
-.top small{
-  opacity:.85;
-  display:block;
-}
-.top h1{
-  margin:6px 0 0;
-  font-size:22px;
-  font-weight:700;
-}
-
-/* ===== CARD GLOBAL ===== */
-.card{
-  margin:14px;
-  padding:14px;
-  background:rgba(20,0,35,.9);
-  border-radius:18px;
-  border:1px solid rgba(160,80,255,.35);
-  box-shadow:0 0 28px rgba(140,0,255,.35);
-}
-
-/* ===== ONLINE USERS / CONNECTIONS ===== */
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-.stat{
-  background:#240046;
-  border-radius:14px;
-  padding:14px;
-}
-.stat b{font-size:20px}
-.stat span{
-  display:block;
-  font-size:13px;
-  opacity:.7;
-  margin-top:4px;
-}
-
-/* ===== LATEST NEWS ===== */
-.title{
-  font-weight:600;
-  margin-bottom:8px;
-}
-.video-box{
-  border-radius:16px;
-  overflow:hidden;
-  border:1px solid rgba(160,80,255,.45);
-  position:relative;
-}
-.video-box video{
+/* VIDEO BACKGROUND */
+video.bg{
+  position:fixed;
+  top:0;left:0;
   width:100%;
-  display:block;
+  height:100%;
+  object-fit:cover;
+  z-index:-2;
 }
-.play{
-  position:absolute;
+.overlay{
+  position:fixed;
   inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:46px;
-  color:white;
-  opacity:.85;
-  pointer-events:none;
+  background:rgba(0,0,0,.65);
+  z-index:-1;
 }
 
-/* ===== ACCOUNT STAT ===== */
-.row{
-  display:flex;
-  gap:12px;
+/* CARD */
+.card{
+  max-width:420px;
+  margin:8vh auto;
+  background:rgba(0,0,0,.7);
+  border:1px solid #ff004c;
+  box-shadow:0 0 25px #ff004c;
+  border-radius:10px;
+  padding:20px;
 }
-.box{
-  flex:1;
-  background:#240046;
-  border-radius:14px;
-  padding:14px;
-}
-.label{
-  font-size:13px;
-  opacity:.6;
-}
-.value{
-  margin-top:6px;
-  font-weight:600;
-}
-.owner{
-  color:#ff4d6d;
-}
+h2{text-align:center;color:#ff004c}
 
-/* ===== BUTTON ===== */
-.btn{
-  margin:14px;
-  padding:16px;
-  border-radius:18px;
-  text-align:center;
-  font-weight:700;
-  background:linear-gradient(135deg,#7b2cff,#c77dff);
-  box-shadow:0 0 25px rgba(160,80,255,.6);
+/* INPUT */
+input,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:6px;
+  border:none;
 }
+input{background:#111;color:#fff;border:1px solid #333}
+button{
+  background:#ff004c;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+button.alt{background:#222}
+button:hover{opacity:.85}
+
+.hide{display:none}
+hr{border:0;border-top:1px solid #333;margin:15px 0}
+.small{font-size:12px;opacity:.7;text-align:center}
+.log{font-size:12px;background:#000;padding:8px;height:80px;overflow:auto}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="top">
-  <small>Welcome back</small>
-  <h1>CYBER ENGINE Dashboard</h1>
+<!-- VIDEO -->
+<video class="bg" autoplay muted loop>
+  <source src="video.mp4" type="video/mp4">
+</video>
+<div class="overlay"></div>
+
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>WA REPORT TOOL</h2>
+  <input id="lu" placeholder="Username">
+  <input id="lp" type="password" placeholder="Password">
+  <button onclick="login()">LOGIN</button>
+  <button class="alt" onclick="register()">REGISTER</button>
+  <div class="small">USER / PREMIUM / OWNER</div>
 </div>
 
-<!-- ONLINE USERS -->
-<div class="card grid2">
-  <div class="stat">
-    <b>0</b>
-    <span>Online Users</span>
+<!-- DASHBOARD -->
+<div class="card hide" id="dash">
+  <h2 id="roleTitle"></h2>
+
+  <button onclick="ban()">BAN</button>
+  <button onclick="unban()">UNBAN</button>
+  <button onclick="bug()">BUG (Premium)</button>
+
+  <div id="ownerPanel" class="hide">
+    <hr>
+    <h3>OWNER PANEL</h3>
+    <input id="pu" placeholder="Username target">
+    <input id="pd" type="number" placeholder="Expired (hari)">
+    <button onclick="makePremium()">SET PREMIUM</button>
   </div>
-  <div class="stat">
-    <b>0</b>
-    <span>Connections</span>
-  </div>
+
+  <hr>
+  <button class="alt" onclick="logout()">LOGOUT</button>
+  <div class="log" id="log"></div>
 </div>
 
-<!-- LATEST NEWS -->
-<div class="card">
-  <div class="title">Latest News</div>
-  <div class="video-box">
-    <video autoplay loop muted playsinline>
-      <source src="video.mp4" type="video/mp4">
-    </video>
-    <div class="play">▶</div>
-  </div>
-</div>
+<script>
+// ===== DATA =====
+const BUG_TEXT = `BRAMA BUG SYSTEM
+REQUEST CHECK ACCOUNT
+PLEASE REVIEW IMMEDIATELY`;
 
-<!-- ACCOUNT STAT -->
-<div class="card">
-  <div class="title">Account Statistics</div>
+let users = JSON.parse(localStorage.getItem('users')) || {
+  owner:{pass:'owner123',role:'OWNER',exp:'2053-05-28'}
+};
+let loginUser = null;
 
-  <div class="row">
-    <div class="box">
-      <div class="label">Username</div>
-      <div class="value" style="color:#c77dff">eruu</div>
-    </div>
-    <div class="box">
-      <div class="label">Role</div>
-      <div class="value owner">OWNER</div>
-    </div>
-  </div>
+function save(){localStorage.setItem('users',JSON.stringify(users))}
+function log(t){logBox.innerHTML+=t+"<br>";logBox.scrollTop=9999}
 
-  <div class="box" style="margin-top:12px">
-    <div class="label">Account Expires</div>
-    <div class="value" style="color:#c77dff">2053-05-28</div>
-  </div>
-</div>
+// ===== AUTH =====
+function login(){
+  let u=lu.value,p=lp.value;
+  if(!users[u]||users[u].pass!==p) return alert('Login gagal');
+  let d=users[u];
+  if(new Date(d.exp)<new Date()) d.role='USER';
+  loginUser=u;
+  showDash();
+}
+function register(){
+  let u=lu.value,p=lp.value;
+  if(!u||!p) return alert('Isi data');
+  if(users[u]) return alert('User ada');
+  users[u]={pass:p,role:'USER',exp:'2000-01-01'};
+  save(); alert('Register OK');
+}
+function logout(){location.reload()}
 
-<div class="btn">Get More Info</div>
+// ===== DASH =====
+function showDash(){
+  loginBox.classList.add('hide');
+  dash.classList.remove('hide');
+  let d=users[loginUser];
+  roleTitle.innerText=`${loginUser} (${d.role})`;
+  if(d.role==='OWNER') ownerPanel.classList.remove('hide');
+  log('Login sukses');
+}
+
+// ===== ACTIONS =====
+function ban(){
+  let n=prompt('Nomor target (62xxx)');
+  if(!n) return;
+  window.open(`mailto:support@support.whatsapp.com?subject=Ban ${n}&body=Please ban number ${n}`);
+  log('BAN email dibuka');
+}
+function unban(){
+  let n=prompt('Nomor target (62xxx)');
+  if(!n) return;
+  window.open(`mailto:support@support.whatsapp.com?subject=Unban ${n}&body=Please unban number ${n}`);
+  log('UNBAN email dibuka');
+}
+function bug(){
+  let d=users[loginUser];
+  if(!(d.role==='PREMIUM'||d.role==='OWNER'))
+    return alert('BUG hanya PREMIUM');
+  let n=prompt('Nomor target (62xxx)');
+  if(!n) return;
+  window.open(`https://wa.me/${n}?text=${encodeURIComponent(BUG_TEXT)}`);
+  log('BUG dikirim ke WA');
+}
+
+// ===== OWNER =====
+function makePremium(){
+  let u=pu.value,days=parseInt(pd.value);
+  if(!users[u]) return alert('User tidak ada');
+  let e=new Date();e.setDate(e.getDate()+days);
+  users[u].role='PREMIUM';
+  users[u].exp=e.toISOString().split('T')[0];
+  save();
+  alert('Premium aktif');
+}
+</script>
 
 </body>
 </html>
