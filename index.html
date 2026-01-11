@@ -2,191 +2,179 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>CYBER ENGINE – WA REPORT</title>
+<title>CYBER ENGINE Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+*{box-sizing:border-box;font-family:Segoe UI,Arial}
 body{
-  margin:0;background:#000;color:#fff;overflow-x:hidden
+  margin:0;
+  background:#000;
+  color:#fff;
 }
 
-/* VIDEO BACKGROUND */
-.video-bg{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  z-index:-1;object-fit:cover;filter:blur(2px) brightness(.4)
+/* ===== TOP HEADER (ungu tebal seperti foto) ===== */
+.top{
+  background:linear-gradient(180deg,#6b1db8,#5a189a);
+  padding:18px 16px 22px;
+  border-radius:0 0 26px 26px;
+  box-shadow:0 10px 40px rgba(120,0,255,.6);
+}
+.top small{
+  opacity:.85;
+  display:block;
+}
+.top h1{
+  margin:6px 0 0;
+  font-size:22px;
+  font-weight:700;
 }
 
-/* CARD */
+/* ===== CARD GLOBAL ===== */
 .card{
-  background:rgba(20,0,40,.75);
-  border:1px solid rgba(180,0,255,.3);
-  border-radius:16px;
-  padding:16px;margin:14px auto;
-  max-width:420px;
-  box-shadow:0 0 30px rgba(180,0,255,.25)
+  margin:14px;
+  padding:14px;
+  background:rgba(20,0,35,.9);
+  border-radius:18px;
+  border:1px solid rgba(160,80,255,.35);
+  box-shadow:0 0 28px rgba(140,0,255,.35);
 }
-h2{margin:0 0 10px;color:#c77dff;text-align:center}
 
-/* INPUT */
-input,button{
-  width:100%;padding:12px;margin-top:8px;
-  border-radius:12px;border:none;font-size:15px
+/* ===== ONLINE USERS / CONNECTIONS ===== */
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
-input{background:#140020;color:#fff;border:1px solid #7020ff}
-button{
-  background:linear-gradient(135deg,#7020ff,#b517ff);
-  color:#fff;font-weight:bold;cursor:pointer
-}
-button:hover{opacity:.9}
-
-/* DASHBOARD */
 .stat{
-  display:flex;justify-content:space-between;
-  background:#12001f;padding:10px;
-  border-radius:12px;margin-top:8px
+  background:#240046;
+  border-radius:14px;
+  padding:14px;
 }
-.badge{
-  padding:4px 10px;border-radius:10px;font-size:12px
-}
-.owner{background:#ff004c}
-.premium{background:#00c853}
-.free{background:#555}
-
-/* ACTIONS */
-.actions button{margin-top:10px}
-.log{
-  font-size:13px;background:#0d0018;
-  padding:10px;border-radius:10px;
-  margin-top:10px;height:120px;overflow:auto
+.stat b{font-size:20px}
+.stat span{
+  display:block;
+  font-size:13px;
+  opacity:.7;
+  margin-top:4px;
 }
 
-.hide{display:none}
+/* ===== LATEST NEWS ===== */
+.title{
+  font-weight:600;
+  margin-bottom:8px;
+}
+.video-box{
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(160,80,255,.45);
+  position:relative;
+}
+.video-box video{
+  width:100%;
+  display:block;
+}
+.play{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:46px;
+  color:white;
+  opacity:.85;
+  pointer-events:none;
+}
+
+/* ===== ACCOUNT STAT ===== */
+.row{
+  display:flex;
+  gap:12px;
+}
+.box{
+  flex:1;
+  background:#240046;
+  border-radius:14px;
+  padding:14px;
+}
+.label{
+  font-size:13px;
+  opacity:.6;
+}
+.value{
+  margin-top:6px;
+  font-weight:600;
+}
+.owner{
+  color:#ff4d6d;
+}
+
+/* ===== BUTTON ===== */
+.btn{
+  margin:14px;
+  padding:16px;
+  border-radius:18px;
+  text-align:center;
+  font-weight:700;
+  background:linear-gradient(135deg,#7b2cff,#c77dff);
+  box-shadow:0 0 25px rgba(160,80,255,.6);
+}
 </style>
 </head>
 
 <body>
 
-<video class="video-bg" autoplay loop muted>
-  <source src="video.mp4" type="video/mp4">
-</video>
-
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>LOGIN</h2>
-  <input id="luser" placeholder="Username">
-  <input id="lpass" type="password" placeholder="Password">
-  <button onclick="login()">Masuk</button>
-  <p style="text-align:center;font-size:13px">
-    Belum punya akun? <a href="#" onclick="showReg()" style="color:#c77dff">Daftar</a>
-  </p>
+<!-- HEADER -->
+<div class="top">
+  <small>Welcome back</small>
+  <h1>CYBER ENGINE Dashboard</h1>
 </div>
 
-<!-- REGISTER -->
-<div class="card hide" id="regBox">
-  <h2>REGISTER</h2>
-  <input id="ruser" placeholder="Username">
-  <input id="rpass" type="password" placeholder="Password">
-  <button onclick="register()">Daftar</button>
-</div>
-
-<!-- DASHBOARD -->
-<div class="card hide" id="dash">
-  <h2>CYBER ENGINE</h2>
-
+<!-- ONLINE USERS -->
+<div class="card grid2">
   <div class="stat">
-    <span id="uName"></span>
-    <span id="uRole" class="badge"></span>
+    <b>0</b>
+    <span>Online Users</span>
   </div>
-
   <div class="stat">
-    <span>Premium Exp</span>
-    <span id="uExp">-</span>
+    <b>0</b>
+    <span>Connections</span>
   </div>
-
-  <div class="actions">
-    <button onclick="actionLog('BUG REPORT')">🐞 BUG</button>
-    <button onclick="actionLog('BAN REQUEST')">⛔ BAN</button>
-    <button onclick="actionLog('UNBAN REQUEST')">✅ UNBAN</button>
-  </div>
-
-  <div class="log" id="logBox"></div>
-
-  <!-- ADMIN -->
-  <div id="adminBox" class="hide">
-    <hr>
-    <h3 style="color:#ff7a7a">ADMIN PANEL</h3>
-    <input id="pUser" placeholder="Username target">
-    <input id="pDay" placeholder="Hari Premium (angka)">
-    <button onclick="setPremium()">Buat Premium</button>
-  </div>
-
-  <button onclick="logout()" style="margin-top:12px;background:#333">Logout</button>
 </div>
 
-<script>
-let users = JSON.parse(localStorage.getItem('users')) || {
-  owner:{pass:'owner123',role:'OWNER',exp:'2053-05-28'}
-}
+<!-- LATEST NEWS -->
+<div class="card">
+  <div class="title">Latest News</div>
+  <div class="video-box">
+    <video autoplay loop muted playsinline>
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div class="play">▶</div>
+  </div>
+</div>
 
-function save(){localStorage.setItem('users',JSON.stringify(users))}
+<!-- ACCOUNT STAT -->
+<div class="card">
+  <div class="title">Account Statistics</div>
 
-function showReg(){
-  loginBox.classList.add('hide')
-  regBox.classList.remove('hide')
-}
+  <div class="row">
+    <div class="box">
+      <div class="label">Username</div>
+      <div class="value" style="color:#c77dff">eruu</div>
+    </div>
+    <div class="box">
+      <div class="label">Role</div>
+      <div class="value owner">OWNER</div>
+    </div>
+  </div>
 
-function register(){
-  let u=ruser.value,p=rpass.value
-  if(!u||!p)return alert('Lengkapi data')
-  if(users[u])return alert('Username sudah ada')
-  users[u]={pass:p,role:'FREE',exp:null}
-  save();alert('Akun dibuat');location.reload()
-}
+  <div class="box" style="margin-top:12px">
+    <div class="label">Account Expires</div>
+    <div class="value" style="color:#c77dff">2053-05-28</div>
+  </div>
+</div>
 
-function login(){
-  let u=luser.value,p=lpass.value
-  if(!users[u]||users[u].pass!==p)return alert('Login gagal')
-  localStorage.setItem('login',u)
-  loadDash()
-}
+<div class="btn">Get More Info</div>
 
-function loadDash(){
-  let u=localStorage.getItem('login')
-  if(!u)return
-  let d=users[u]
-  loginBox.classList.add('hide')
-  regBox.classList.add('hide')
-  dash.classList.remove('hide')
-  uName.innerText=u
-  uRole.innerText=d.role
-  uRole.className='badge '+(d.role=='OWNER'?'owner':d.exp?'premium':'free')
-  uExp.innerText=d.exp||'-'
-  if(d.role=='OWNER')adminBox.classList.remove('hide')
-}
-
-function logout(){
-  localStorage.removeItem('login')
-  location.reload()
-}
-
-function actionLog(txt){
-  let log=document.createElement('div')
-  log.innerText=new Date().toLocaleTimeString()+' • '+txt
-  logBox.prepend(log)
-}
-
-function setPremium(){
-  let u=pUser.value,day=parseInt(pDay.value)
-  if(!users[u])return alert('User tidak ada')
-  let exp=new Date()
-  exp.setDate(exp.getDate()+day)
-  users[u].exp=exp.toISOString().split('T')[0]
-  users[u].role='PREMIUM'
-  save();alert('Premium aktif')
-}
-
-loadDash()
-</script>
 </body>
-  </html>
+</html>
