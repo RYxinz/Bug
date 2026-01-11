@@ -2,181 +2,127 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>WA Report Tool</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Dark Stars V2.0</title>
 <style>
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body,html{margin:0;height:100%;color:#fff}
-
-/* VIDEO BACKGROUND */
-video.bg{
-  position:fixed;
-  top:0;left:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:-2;
-}
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.65);
-  z-index:-1;
-}
-
-/* CARD */
-.card{
-  max-width:420px;
-  margin:8vh auto;
-  background:rgba(0,0,0,.7);
-  border:1px solid #ff004c;
-  box-shadow:0 0 25px #ff004c;
-  border-radius:10px;
-  padding:20px;
-}
-h2{text-align:center;color:#ff004c}
-
-/* INPUT */
-input,button{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:6px;
-  border:none;
-}
-input{background:#111;color:#fff;border:1px solid #333}
-button{
-  background:#ff004c;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-button.alt{background:#222}
-button:hover{opacity:.85}
-
-.hide{display:none}
-hr{border:0;border-top:1px solid #333;margin:15px 0}
-.small{font-size:12px;opacity:.7;text-align:center}
-.log{font-size:12px;background:#000;padding:8px;height:80px;overflow:auto}
+*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{margin:0;background:#000;color:#fff}
+video.bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;filter:brightness(.35)}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px}
+header h1{letter-spacing:2px;font-size:16px}
+.card{max-width:420px;margin:18px auto;background:rgba(0,0,0,.65);border-radius:22px;padding:18px;box-shadow:0 0 28px rgba(200,0,255,.45)}
+.title{text-align:center;color:#d46cff;letter-spacing:3px;margin-bottom:10px}
+label{color:#d46cff;margin:10px 0 6px;display:block}
+input,select,button{width:100%;padding:14px;border-radius:14px;border:none;outline:none;background:#141414;color:#fff}
+button{margin-top:16px;background:linear-gradient(90deg,#b100ff,#ff3cff);cursor:pointer}
+.row{display:grid;gap:10px}
+.info{margin-top:14px;display:grid;gap:8px}
+.info div{background:#0f0f0f;padding:10px 12px;border-radius:12px;display:flex;justify-content:space-between}
+.badge{padding:4px 10px;border-radius:20px;background:#2a2a2a}
+.footer{text-align:center;opacity:.7;margin-top:10px}
+.hidden{display:none}
 </style>
 </head>
-
 <body>
 
-<!-- VIDEO -->
-<video class="bg" autoplay muted loop>
-  <source src="video.mp4" type="video/mp4">
+<video class="anime" autoplay loop muted>
+  <source src="anime.mp4" type="video/mp4">
 </video>
-<div class="overlay"></div>
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>WA REPORT TOOL</h2>
-  <input id="lu" placeholder="Username">
-  <input id="lp" type="password" placeholder="Password">
-  <button onclick="login()">LOGIN</button>
-  <button class="alt" onclick="register()">REGISTER</button>
-  <div class="small">USER / PREMIUM / OWNER</div>
-</div>
+<header>
+  <h1>ATTACK MENU</h1>
+  <span>👤</span>
+</header>
 
-<!-- DASHBOARD -->
-<div class="card hide" id="dash">
-  <h2 id="roleTitle"></h2>
+<div class="card">
+  <div class="title">BRAMZ CRASH</div>
 
-  <button onclick="ban()">BAN</button>
-  <button onclick="unban()">UNBAN</button>
-  <button onclick="bug()">BUG (Premium)</button>
-
-  <div id="ownerPanel" class="hide">
-    <hr>
-    <h3>OWNER PANEL</h3>
-    <input id="pu" placeholder="Username target">
-    <input id="pd" type="number" placeholder="Expired (hari)">
-    <button onclick="makePremium()">SET PREMIUM</button>
+  <!-- LOGIN -->
+  <div id="loginBox" class="row">
+    <label>Username</label>
+    <input id="u" placeholder="username">
+    <label>Password</label>
+    <input id="p" type="password" placeholder="password">
+    <button onclick="login()">LOGIN</button>
   </div>
 
-  <hr>
-  <button class="alt" onclick="logout()">LOGOUT</button>
-  <div class="log" id="log"></div>
+  <!-- PANEL -->
+  <div id="panel" class="hidden">
+    <label>Target Number</label>
+    <input id="target" placeholder="Nomor kamu sendiri">
+
+    <label>Select Yours Menu</label>
+    <select id="menu">
+      <option>Support Request</option>
+      <option>Bug Report</option>
+    </select>
+
+    <button onclick="execute()">EXECUTION</button>
+
+    <div class="info">
+      <div><span>Username</span><b id="iUser"></b></div>
+      <div><span>Role</span><b id="iRole" class="badge"></b></div>
+      <div><span>Account Expired</span><b id="iExp"></b></div>
+    </div>
+
+    <!-- OWNER PANEL -->
+    <div id="owner" class="hidden">
+      <hr>
+      <label>Buat Akun Premium</label>
+      <input id="nu" placeholder="username baru">
+      <input id="np" placeholder="password">
+      <input id="nd" type="date">
+      <button onclick="createPremium()">CREATE</button>
+    </div>
+  </div>
+
+  <div class="footer">Active • Safe • Local</div>
 </div>
 
 <script>
-// ===== DATA =====
-const BUG_TEXT = `BRAMA BUG SYSTEM
-REQUEST CHECK ACCOUNT
-PLEASE REVIEW IMMEDIATELY`;
+const db = JSON.parse(localStorage.getItem('db')||'{}');
+if(!db.owner){
+  db.owner={pass:'owner123',role:'OWNER',exp:'2099-12-31'};
+  localStorage.setItem('db',JSON.stringify(db));
+}
+let me=null;
 
-let users = JSON.parse(localStorage.getItem('users')) || {
-  owner:{pass:'owner123',role:'OWNER',exp:'2053-05-28'}
-};
-let loginUser = null;
-
-function save(){localStorage.setItem('users',JSON.stringify(users))}
-function log(t){logBox.innerHTML+=t+"<br>";logBox.scrollTop=9999}
-
-// ===== AUTH =====
 function login(){
-  let u=lu.value,p=lp.value;
-  if(!users[u]||users[u].pass!==p) return alert('Login gagal');
-  let d=users[u];
-  if(new Date(d.exp)<new Date()) d.role='USER';
-  loginUser=u;
-  showDash();
-}
-function register(){
-  let u=lu.value,p=lp.value;
-  if(!u||!p) return alert('Isi data');
-  if(users[u]) return alert('User ada');
-  users[u]={pass:p,role:'USER',exp:'2000-01-01'};
-  save(); alert('Register OK');
-}
-function logout(){location.reload()}
-
-// ===== DASH =====
-function showDash(){
-  loginBox.classList.add('hide');
-  dash.classList.remove('hide');
-  let d=users[loginUser];
-  roleTitle.innerText=`${loginUser} (${d.role})`;
-  if(d.role==='OWNER') ownerPanel.classList.remove('hide');
-  log('Login sukses');
+  const u=uEl().value,p=pEl().value;
+  const d=JSON.parse(localStorage.getItem('db')||'{}');
+  if(!d[u]||d[u].pass!==p) return alert('Login gagal');
+  me={u, ...d[u]};
+  document.getElementById('loginBox').classList.add('hidden');
+  document.getElementById('panel').classList.remove('hidden');
+  i('iUser').textContent=u;
+  i('iRole').textContent=me.role;
+  i('iExp').textContent=me.exp;
+  if(me.role==='OWNER') i('owner').classList.remove('hidden');
 }
 
-// ===== ACTIONS =====
-function ban(){
-  let n=prompt('Nomor target (62xxx)');
-  if(!n) return;
-  window.open(`mailto:support@support.whatsapp.com?subject=Ban ${n}&body=Please ban number ${n}`);
-  log('BAN email dibuka');
-}
-function unban(){
-  let n=prompt('Nomor target (62xxx)');
-  if(!n) return;
-  window.open(`mailto:support@support.whatsapp.com?subject=Unban ${n}&body=Please unban number ${n}`);
-  log('UNBAN email dibuka');
-}
-function bug(){
-  let d=users[loginUser];
-  if(!(d.role==='PREMIUM'||d.role==='OWNER'))
-    return alert('BUG hanya PREMIUM');
-  let n=prompt('Nomor target (62xxx)');
-  if(!n) return;
-  window.open(`https://wa.me/${n}?text=${encodeURIComponent(BUG_TEXT)}`);
-  log('BUG dikirim ke WA');
+function execute(){
+  const t=i('target').value.trim();
+  if(!t) return alert('Isi nomor kamu sendiri');
+  const m=i('menu').value;
+  // AKSI AMAN:
+  if(m==='Support Request'){
+    window.location.href =
+      'mailto:support@support.whatsapp.com?subject=Support Request&body=Nomor saya: '+encodeURIComponent(t);
+  }else{
+    window.open('https://wa.me/6283152406327'+t,'_blank');
+  }
 }
 
-// ===== OWNER =====
-function makePremium(){
-  let u=pu.value,days=parseInt(pd.value);
-  if(!users[u]) return alert('User tidak ada');
-  let e=new Date();e.setDate(e.getDate()+days);
-  users[u].role='PREMIUM';
-  users[u].exp=e.toISOString().split('T')[0];
-  save();
-  alert('Premium aktif');
+function createPremium(){
+  const d=JSON.parse(localStorage.getItem('db'));
+  d[i('nu').value]={pass:i('np').value,role:'PREMIUM',exp:i('nd').value};
+  localStorage.setItem('db',JSON.stringify(d));
+  alert('Akun premium dibuat');
 }
+
+const i=id=>document.getElementById(id);
+const uEl=()=>document.getElementById('u');
+const pEl=()=>document.getElementById('p');
 </script>
-
 </body>
 </html>
